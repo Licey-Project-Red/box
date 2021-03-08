@@ -1,29 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type='text/javascript'>
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var ddata = google.visualization.arrayToDataTable([
-                ['DateTime', 'Temperature', 'Humidity', 'Illumination', 'Movement', 'Noise', 'CO2'],
-                {% for d in data %}
-                    ['{{d.time}}', {{d.d1}}, {{d.d2}}, {{d.d3}}, {{d.d4}}, {{d.d5}}, {{d.d6}}],
-                {% endfor %}
-                ]);
-
-                var options = {
-                title: 'Box Data',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-                };
-
-                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-                chart.draw(ddata, options);
-            }
-        </script>
         <meta charset="UTF-8">
         <style type="text/css">
             table {
