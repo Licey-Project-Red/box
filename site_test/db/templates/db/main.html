@@ -82,6 +82,7 @@
         <title>Boxes data</title>
     </head>
     <body>
+<<<<<<< HEAD
         <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-body border-bottom shadow-sm">
             <p class="h5 my-0 me-md-auto fw-normal">Licey Project Red</p>
             <a class="btn btn-outline-primary" href="/chart">Графики</a>
@@ -97,5 +98,35 @@
             <input type="button" onclick="f()" value="ok">
         </form>
         <table id="tb"></table>
+=======
+        {% if data %}
+        <table>
+            <tr>
+                <td><strong>Дата и время</strong></td>
+                <td><strong>Номер коробки</strong></td>
+                <td><strong>Температура, °C</strong></td>
+                <td><strong>Влажность, %</strong></td>
+                <td><strong>Освещенность, %</strong></td>
+                <td><strong>Движение, %</strong></td>
+                <td><strong>Шум, %</strong></td>
+                <td><strong>Газ, %</strong></td>
+            </tr>  
+            {% for d in data %}
+                <tr> <td>{{d.time}}</td>
+                    <td>{{d.box_number}}</td>
+                    <td>{{d.d1}}</td>
+                    <td>{{d.d2}}</td>
+                    <td>{{d.d3}}</td>
+                    <td>{{d.d4}}</td>
+                    <td>{{d.d5}}</td>
+                    <td>{{d.d6}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            Пока данных нет
+        {% endif %}
+
+>>>>>>> 6f5539612a8494774a51817d888ee057da9310c7
     </body>
 </html>
