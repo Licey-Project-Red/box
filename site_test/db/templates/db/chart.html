@@ -1,74 +1,109 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Refresh" content="10"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <style type="text/css">
+        div{
+            margin-left: auto;
+            margin-right: auto;
+        }
+        </style>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
         <script type='text/javascript'>
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var ddata = google.visualization.arrayToDataTable([
-                ['Дата', 'Влажность', 'Освещенность', 'Шум', 'CO2'],
-                {% for d in data %}
-                    ['{{d.time}}', {{d.d2}}, {{d.d3}}, {{d.d5}}, {{d.d6}}],
-                {% endfor %}
-                ]);
+            let l = "all";
+            setInterval(function redraw_charts(){
+                $.ajax({
+                    url: '', //url страницы (action_ajax_form.php)
+                    type: "POST", //метод отправки
+                    success: function(d){
+                            d = JSON.parse(d);
+                            if (l > d.length || l == "all"){
+                                l = d.length
+                            }
+                            google.charts.load('current', {'packages':['corechart']});
+                            google.charts.setOnLoadCallback(drawChart);
+                            function drawChart() {
+                                drawChartA = [['Дата', 'Влажность', 'Освещенность', 'Шум', 'CO2']];
+                                for (i = 0; i < l; i++){
+                                    drawChartA.push([d[i]['time'], Number(d[i]['d2']), Number(d[i]['d3']), Number(d[i]['d5']), Number(d[i]['d6'])])
+                                }
+                                var ddata = google.visualization.arrayToDataTable(drawChartA);
 
-                var options = {
-                title: 'Данные',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-                };
+                                var options = {
+                                title: 'Данные',
+                                curveType: 'function',
+                                legend: { position: 'bottom' }
+                                };
 
-                var data_chart = new google.visualization.LineChart(document.getElementById('curve_chart'));                
+                                var data_chart = new google.visualization.LineChart(document.getElementById('curve_chart'));                
 
-                data_chart.draw(ddata, options);
-            }
+                                data_chart.draw(ddata, options);
+                            }
 
-            google.charts.setOnLoadCallback(drawTemperatureChart);
-            function drawTemperatureChart() {
-                var tdata = google.visualization.arrayToDataTable([
-                ['DateTime', 'Температура'],
-                {% for d in data %}
-                    ['{{d.time}}', {{d.d1}}],
-                {% endfor %}
-                ]);
+                            google.charts.setOnLoadCallback(drawTemperatureChart);
+                            function drawTemperatureChart() {
+                                drawTemperatureChartA = [['DateTime', 'Температура']];
+                                for (i = 0; i < l; i++){
+                                    drawTemperatureChartA.push([d[i]['time'], Number(d[i]['d1'])])
+                                }
+                                var tdata = google.visualization.arrayToDataTable(drawTemperatureChartA);
 
-                var options = {
-                title: 'Температура',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-                };
+                                var options = {
+                                title: 'Температура',
+                                curveType: 'function',
+                                legend: { position: 'bottom' }
+                                };
 
-                var temperature_chart = new google.visualization.LineChart(document.getElementById('temperature'));               
+                                var temperature_chart = new google.visualization.LineChart(document.getElementById('temperature'));
+                                temperature_chart.draw(tdata, options);
+                            }
 
-                temperature_chart.draw(tdata, options);
-            }
+                            google.charts.setOnLoadCallback(drawMovementChart);
+                            function drawMovementChart() {
+                                drawMovementChartA = [['DateTime', 'Движение']];
+                                for (i = 0; i < l; i++){
+                                    drawMovementChartA.push([d[i]['time'], Number(d[i]['d4'])])
+                                }
+                                var mdata = google.visualization.arrayToDataTable(drawMovementChartA);
 
-            google.charts.setOnLoadCallback(drawMovementChart);
-            function drawMovementChart() {
-                var mdata = google.visualization.arrayToDataTable([
-                ['DateTime', 'Движение'],
-                {% for d in data %}
-                    ['{{d.time}}', {{d.d4}}],
-                {% endfor %}
-                ]);
+                                var options = {
+                                title: 'Движение',
+                                legend: { position: 'bottom' }
+                                };
 
-                var options = {
-                title: 'Движение',
-                legend: { position: 'bottom' }
-                };
+                                var movement_chart = new google.visualization.LineChart(document.getElementById('Movement'));               
 
-                var movement_chart = new google.visualization.LineChart(document.getElementById('Movement'));               
+                                movement_chart.draw(mdata, options);
+                            }
+                        },
+                    error: function(d) { // Данные не отправлены
+                        console.log("Ошибка. Данные не отправленны");
+                    }
+                });
+            }, 1000);
 
-                movement_chart.draw(mdata, options);
-            }
+            function f(){
+                l = document.getElementById('select1').value;
+            };
         </script>
         <meta charset="UTF-8">
         <title>Boxes data</title>
     </head>
     <body>
-        <a href="/">Данные</a> 
+        <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-body border-bottom shadow-sm">
+            <p class="h5 my-0 me-md-auto fw-normal">Licey Project Red</p>
+            <a class="btn btn-outline-primary" href="/">Данные</a>
+        </header>
+            {% csrf_token %}
+            <select name="town" id="select1">
+                <option value=10>10</option>
+                <option value=50>50</option>
+                <option value=100>100</option>
+                <option value="all">Все</option>
+            </select>
+            <input type="button" onclick="f()" value="ok">
+        </form>
         <div id="curve_chart" style="width: 1000px; height: 500px"></div>
         <div id="temperature" style="width: 1000px; height: 500px"></div>
         <div id="Movement" style="width: 1000px; height: 500px"></div>

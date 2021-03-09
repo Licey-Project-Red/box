@@ -1,7 +1,7 @@
 from django.db import models
 
 class DB(models.Model):
-    time = models.CharField(max_length=50)
+    time = models.DateTimeField()
     box_number = models.CharField(max_length=5)
     d1 = models.CharField(max_length=5)
     d2 = models.CharField(max_length=5)
@@ -12,4 +12,5 @@ class DB(models.Model):
 
 
     def __str__(self):
-        return self.time
+        return str(self.time)
+        # +' '+self.d1+' '+self.d2+' '+self.d3+' '+self.d4+' '+self.d5+' '+self.d6
