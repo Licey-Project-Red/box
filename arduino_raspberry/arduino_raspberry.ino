@@ -21,13 +21,12 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 #include <TroykaMQ.h>
 #define PIN_MQ135  A5
 MQ135 mq135(PIN_MQ135);
-const int CO2_norm = 1000;
 const int RO = 28.82;
 // подключение mq-135
 
 const int dgt = 3; 
 const int anlg = A3;
-
+// подключение датчика шума
 void setup() 
 {
   delay(30000);
@@ -50,7 +49,6 @@ void loop() {
   int light = sensorLight.getLightLux()/5;
   if(light>100) light = 100;
   int CO2 = mq135.readCO2();
-  if(CO2 > 1000) CO2 = 1000;
   int noise = abs((analogRead(anlg)-500));
   noise = abs(noise);
   if(noise > 100) noise = 100;
@@ -67,5 +65,5 @@ void loop() {
   Serial.print(noise);
   Serial.print(" ");
   Serial.println(CO2);
-  delay(0); //9650/2
+  delay(0);
 } 
